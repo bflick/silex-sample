@@ -1,0 +1,15 @@
+{
+    "require": {
+        "silex/silex": "~2.0",
+        "doctrine/doctrine-migrations-bundle": "^1.0",
+        "kurl/silex-doctrine-migrations-provider": "^0.2.2",
+        "dflydev/doctrine-orm-service-provider": "^2.0",
+        "symfony/serializer": "^3.3",
+        "eole/sandstone": "^1.2"
+    },
+    "autoload": {
+	"psr-4": {
+            "Sample\\": "application/src/Sample"
+        }
+    }
+}

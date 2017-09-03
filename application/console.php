@@ -1,0 +1,7 @@
+<?php
+require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/bootstrap.php';
+
+$app->boot();
+
+$console->run();
