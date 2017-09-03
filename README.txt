@@ -1,4 +1,4 @@
-DEPENDENCIES: npm, libzmq, composer
+DEPENDENCIES: php, apache, mysql, npm, libzmq, composer
 
 Ok first things first. You should install ext-zmq for php.
 
@@ -69,10 +69,8 @@ Finally you should start a websocket for the front end to listen to, and the bac
 $ cd application
 $ php websocket.php
 
-Now the program should load in a browser. The only console error I saw was that manifest.json was not found. I think there is a better way to set up the vhost config so that I don't need to use php::read_file to serve the main html page.
+The idea behind this is to have get/post controllers for the top level objects (dormatories) of which there should be two. I also wanted to have a dropdown of students that could be chosen for each bedroom space. This is a great use case for react, and I am saving this project so that I can work on reactjs elements.
 
-The idea behind this is to have get/post controllers for the top level objects (dormatories) of which there should be two. (These controllers are not working right now, and Silex is only allowing GET / for some reason). The front end is listening to a websocket that will post updates every time one gets made, so that if someone else alters the page you should see the update as soon as possible.
-
-I also wanted to have a dropdown of students that could be chosen for each bedroom space. But since my Silex controllers are giving me issues, I cannot write the reactjs code.
+Database changes should be persisted from the top down, so if someone changes the dormatory object and saves it, each bedroom and student will also change. The parts that remain of the assignment are; to make sure 50% of dorms are filled when a user clicks save, and validation to make sure there is only one gender per suite.
 
 Thank you for the fun project, and opportunity.
