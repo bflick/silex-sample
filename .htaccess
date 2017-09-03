@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    Options +FollowSymlinks -MultiViews
+    RewriteEngine On
+
+    RewriteCond %{DOCUMENT_ROOT}/static%{REQUEST_URI} -f
+    RewriteRule ^ www/build/static%{REQUEST_URI} [L]
+
+    RewriteCond %{REQUEST_URI} !^/static/
+    RewriteRule ^(.*)$ www/index.php [QSA,L]
+</IfModule>

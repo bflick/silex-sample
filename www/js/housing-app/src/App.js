@@ -6,7 +6,6 @@ import './App.css';
 class App extends Component {
 
     //@todo state of pagination/floor view
-
     constructor(props) {
         super(props);
         var dorm;
@@ -22,9 +21,14 @@ class App extends Component {
         };
     }
 
+    /**
+     * @todo Verify all genders are the same.
+     * @todo Make up input data if dorms are not 50% full
+    */
     onSubmit(event) {
         event.preventDefault();
-        var dormPostRequest = new Request('http://sample/dormatories', {
+	
+        var dormPostRequest = new Request('/dormatories', {
             method: 'POST',
             data: JSON.stringify(this.props.dataStore.data),
         });

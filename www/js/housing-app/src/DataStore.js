@@ -37,7 +37,7 @@ class DataStore {
 
     allStudents() {
         var self = this;
-        var studentRequest = new Request('http://sample/students');
+        var studentRequest = new Request('/students');
         return fetch(studentRequest)
             .then(function(response) {
                 if(response.status == 200) return response.json();

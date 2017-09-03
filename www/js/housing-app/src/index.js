@@ -5,7 +5,7 @@ import App from './App';
 import DataStore from './DataStore';
 import registerServiceWorker from './registerServiceWorker';
 
-const socket = new WebSocket('ws://127.0.0.1:25569');
+const socket = new WebSocket('ws://sample/websocket');
 
 socket.onopen = function() {
     socket.send(JSON.stringify([5, 'sub-dormatory']));
