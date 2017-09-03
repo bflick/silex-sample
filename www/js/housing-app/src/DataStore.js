@@ -4,9 +4,8 @@ class DataStore {
     }
 
     setData(data) {
-        var tData = JSON.parse(data);
-        for(var d in tData) {
-            var dat = tData[d]
+        for(var d in data) {
+            var dat = data[d]
             if (dat.id) {
                 this.data[dat.id] = dat;
             } else {
@@ -29,10 +28,12 @@ class DataStore {
 
     findStudent(studentId) {
         if(!this.students) {
-            this.allStudents()
+            return this.allStudents().then(function() {
+                var stu = this.students[studentId];
+                return stu;
+            });
         }
-        var stu = this.students[studentId];
-        return stu;
+        return null;
     }
 
     allStudents() {

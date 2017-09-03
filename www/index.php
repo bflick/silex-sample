@@ -27,13 +27,20 @@ $app->get('/dormatories', function() use ($dormatoryJsonProvider) {
 
 $app->post('/dormatories', function(Request $request) use ($app) {
     $diffList = array();
-    $dormRepo = $app['em']->getRepository(Dormatory::class);
-    $brRepo = $app['em']->getRepository(Bedroom::class);
-    $dormRequestContent = $app['serializer']->deserialize(
-        $request->getContent(),
-        'array<\Sample\Housing\Entities\Dormatory>',
-        'json'
-    );
+    $dormRepo = $app['orm.em']->getRepository(Dormatory::class);
+    $brRepo = $app['orm.em']->getRepository(Bedroom::class);
+    $content = $request->getContent();
+
+    // there should only be a list of 2 dorm buildings in json
+    if (count($content) == 2) {
+        $dormRequestContent = $app['serializer']->deserialize(
+            $content,
+            'ArrayCollection<\Sample\Housing\Entities\Dormatory>',
+            'json'
+        );
+    } else {
+        return new Response('{"success": false}', 202);
+    }
     // Dispatch an audit on the dorms
     $event = new Audit();
     $auditContent = $sep = '';
@@ -63,11 +70,11 @@ $app->post('/dormatories', function(Request $request) use ($app) {
     foreach ($event->getDormatories() as $dorm) {
         foreach ($dorm->getBedrooms() as $bedroom) {
             $bedroom->setStudent($dormRequestContent[$dorm->getId()]->getStudent());
-            $app['em']->persist($bedroom);
+            $app['orm.em']->persist($bedroom);
         }
-        $app['em']->persist($dorm);
+        $app['orm.em']->persist($dorm);
     }
-    $app['em']->flush();
+    $app['orm.em']->flush();
 
     foreach($diffList as $studentId => $floorNumber) {
         $auditContent .= $sep . $studentId . ':' . $floorNumber;
@@ -84,30 +91,10 @@ $app->post('/dormatories', function(Request $request) use ($app) {
 });
 
 $app->get('/students', function() use ($app) {
-    $studentRepo = $app['em']->getRepository(Student::class);
+    $studentRepo = $app['orm.em']->getRepository(Student::class);
     $students = $studentRepo->findAll();
-    return new Response($app['serialzer']->serialize($students, 'json'), 200);
+    return new Response($app['serializer']->serialize($students, 'json'), 200);
 });
-
-// $app->post('/dormatories', function(Request $request) use ($app) {
-//     $data = $request->getContent();
-
-//     $dormatories = $app['serializer']->deserialize(
-//         $data,
-//         'array<Sample/Housing/Entities/Dormatory>',
-//         'json'
-//     );
-//     $returnDorms = array();
-//     foreach ($dormatories as $dorm) {
-//         // @todo some validation
-
-//         $app['em']->persist($dorm);
-//         $returnDorms []= $dorm;
-//     }
-//     $app['em']->flush();
-
-//     return new Response($app['serializer']->serialize($returnDorms, 'json'), 200);
-// });
 
 $app->run();
 ?>

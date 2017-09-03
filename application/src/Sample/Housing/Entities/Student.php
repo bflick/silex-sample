@@ -37,7 +37,7 @@ class Student
     }
 
     /**
-     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="Bedroom")
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="Bedroom", inversedBy="student")
      */
     protected $bedroom;
 

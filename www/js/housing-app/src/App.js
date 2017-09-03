@@ -30,7 +30,7 @@ class App extends Component {
 	
         var dormPostRequest = new Request('/dormatories', {
             method: 'POST',
-            data: JSON.stringify(this.props.dataStore.data),
+            body: JSON.stringify(this.props.dataStore.data),
         });
         return fetch(dormPostRequest)
             .then(function(response) {

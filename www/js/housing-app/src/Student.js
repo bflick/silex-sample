@@ -10,23 +10,11 @@ class Student extends Component {
         };
 
         //@todo getAllStudents from datastore
-
-        this.changeVisibility = this.onChangeVisibilty.bind(this);
-    }
-
-    onChangeVisibilty(event) {
-        var newDisplayInput = event.target.value;
-        this.setState(function(prevState, currentProps) {
-            return {
-                student: prevState.student,
-                displayInput: newDisplayInput,
-            };
-        });
     }
 
     onChangeStudent(event) {
         // @todo prompt with a question about where to put old student
-
+        // @todo debounce timeout
         var newStudent = this.props.dataStore.findStudent(event.target['data-studentId']);
         if (event.target.id) {
             switch (event.target.id) {
@@ -76,8 +64,21 @@ class Student extends Component {
         // @todo do this in an onSubmit fn
         this.props.dataStore.sendMessage(JSON.stringify(this.props.dataStore.data));
     }
-    
+
+    onChangeVisibility(event) {
+        var newDisplayInput = event.target.value;
+        this.setState(function(prevState, currentProps) {
+            return {
+                student: prevState.student,
+                displayInput: newDisplayInput,
+            };
+        });
+    }
+
     render() {
+        var self = this;
+        const onChangeVisibility = self.onChangeVisibility.bind(self);
+
         const hiddenStyle = {visibility: 'hidden'};
         const visibleStyle = {visibility: 'visible'};
         var nameStyle = hiddenStyle;
@@ -109,34 +110,34 @@ class Student extends Component {
         return (<div>
                 <div style={nameStyle}>
                 <label for="student-name">Name:</label>
-                <input id="student-name" type="text" onChange={this.onChangeStudent.bind(this)} data-studentId={this.state.student.id}/>
+                <input id="student-name" type="text" onChange={self.onChangeStudent.bind(self)} data-studentId={self.state.student.id}/>
                 </div>
 
                 <div style={dobStyle}>
                 <label for="student-dob"> DOB:</label>
-                <input id="student-dob" type="text" onChange={this.onChangeStudent.bind(this)} data-studentId={this.state.student.id}/>
+                <input id="student-dob" type="text" onChange={self.onChangeStudent.bind(self)} data-studentId={self.state.student.id}/>
                 </div>
 
                 <div style={addressStyle}>
                 <label for="student-address"> Address:</label>
-                <input id="student-address" type="text" onChange={this.onChangeStudent.bind(this)} data-studentId={this.state.student.id}/>
+                <input id="student-address" type="text" onChange={self.onChangeStudent.bind(self)} data-studentId={self.state.student.id}/>
                 </div>
 
                 <div  style={phoneStyle}>
                 <label for="student-phone"> Phone:</label>
-                <input id="student-phone" type="text" onChange={this.onChangeStudent.bind(this)} data-studentId={this.state.student.id}/>
+                <input id="student-phone" type="text" onChange={self.onChangeStudent.bind(self)} data-studentId={self.state.student.id}/>
                 </div>
                 
                 <div style={genderStyle}>
                 <label for="student-gender"> Gender:</label>
-                <input id="student-gender" type="text" onChange={this.onChangeStudent.bind(this)} data-studentId={this.state.student.id}/>
+                <input id="student-gender" type="text" onChange={self.onChangeStudent.bind(self)} data-studentId={self.state.student.id}/>
                 </div>
 
                 <div style={idStyle}>
                 <label for="student-id"> Id#:</label>
-                <input id="student-id" type="text" onChange={this.onChangeStudent.bind(this)} data-studentId={this.state.student.id}/>
-                </div>
-                <select onChange={this.changeVisiblity} value={this.state.displayInput}>
+                <input id="student-id" type="text" onChange={self.onChangeStudent.bind(self)} data-studentId={self.state.student.id}/>
+                </div>  
+                <select onChange={onChangeVisibility} value={self.state.displayInput}>
                 <option value="name">Name</option>
                 <option value="dob">Dob</option>
                 <option value="address">Address</option>
