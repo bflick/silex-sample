@@ -28,7 +28,7 @@ class App extends Component {
     onSubmit(event) {
         event.preventDefault();
 	
-        var dormPostRequest = new Request('/dormatories', {
+        var dormPostRequest = new Request(process.env.REACT_APP_HOUSING_API+'dormatories', {
             method: 'POST',
             body: JSON.stringify(this.props.dataStore.data),
         });

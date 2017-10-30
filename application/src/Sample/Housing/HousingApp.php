@@ -29,8 +29,9 @@ class HousingApp extends Application
         $this->register(new DoctrineServiceProvider(), array(
             'db.options' => array(
                 'driver'   => 'pdo_mysql',
+                'host'     => getenv('DB_HOST'),
                 'user'     => 'root',
-                'password' => 'Ohitmots5',
+                'password' => getenv('DB_PASS'),
                 'dbname' => 'sample',
             ),
         ));

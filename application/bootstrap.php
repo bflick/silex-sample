@@ -6,6 +6,9 @@ $rootDir = __DIR__;
 $varDir = __DIR__;
 $entityPath = __DIR__.'/src/Sample/Housing/Entities';
 
+$dotenv = new Dotenv\Dotenv(dirname(__DIR__));
+$dotenv->load();
+
 $console = new \Symfony\Component\Console\Application();
 
 $app = new Sample\Housing\HousingApp(array(

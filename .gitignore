@@ -2,6 +2,11 @@
 
 # dependencies
 /node_modules
+/www/js/housing-app/.env
+/www/js/housing-app/package-lock.json
+/www/js/housing-app/node_modules/
+/www/js/housing-app/build/
+/www/build/
 
 # testing
 /coverage
@@ -19,3 +24,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/.env
+/vendor/
