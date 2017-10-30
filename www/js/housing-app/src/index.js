@@ -9,7 +9,7 @@ const socket = new WebSocket('ws://sample/websocket');
 const dataStore = new DataStore();
 
 socket.onopen = function() {
-    var dormInitialRequest = new Request('/dormatories');
+    var dormInitialRequest = new Request(process.env.REACT_APP_HOUSING_API+'dormatories');
     fetch(dormInitialRequest).then(function(response) {
 	if (response.status !== 200) {
 	    throw new Error('Initial dorm response failed');

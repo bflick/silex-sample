@@ -1,0 +1,60 @@
+version: '2'
+
+services:
+    rest-api:
+        image: nginx
+        ports:
+            - 8480:80
+        volumes:
+            - .:/var/www/html/
+            - ./docker/rest-api/nginx.conf:/etc/nginx/conf.d/default.conf
+        links:
+            - php-fpm
+
+    websocket-server:
+        container_name: sandstone-ws
+        build: docker/php-fpm
+        command: php application/websocket.php
+        ports:
+            - 8482:8482
+        volumes:
+            - .:/var/www/html/
+
+    php-fpm:
+        container_name: sandstone-php
+        build: docker/php-fpm
+        volumes:
+            - .:/var/www/html/
+        links:
+            - database
+            - websocket-server
+
+    database:
+        container_name: sandstone-database
+        image: mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            PMA_HOST: database
+        ports:
+            - 8481:80
+
+    node:
+        image : node:8-alpine
+        container_name: housing-node
+        volumes:
+            - .:/var/www
+        working_dir: /var/www
+        command: sleep 100000000
+
+    front:
+        image: nginx
+        ports:
+            - 8483:80
+        volumes:
+            - ./www/build:/var/www/html/
+            - ./docker/front/nginx.conf:/etc/nginx/conf.d/default.conf

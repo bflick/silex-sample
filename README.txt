@@ -1,5 +1,7 @@
 DEPENDENCIES: php, apache, mysql, npm, libzmq, composer
 
+Note: Or there is also a Docker environment, see at the bottom of this file.
+
 Ok first things first. You should install ext-zmq for php.
 
 $ pecl install ext-zmq
@@ -13,6 +15,11 @@ and
 libzmq.dll and libsodium.dll into C:/wamp64/bin/php/php7.0.10/
 
 Make sure the extension is loaded by php.ini, then install source.
+
+Install environment variables
+
+$ cp dev.env
+$ cp www/js/housing-app/dev.env www/js/housing-app/.env
 
 $ composer install
 
@@ -74,3 +81,20 @@ The idea behind this is to have get/post controllers for the top level objects (
 Database changes should be persisted from the top down, so if someone changes the dormatory object and saves it, each bedroom and student will also change. The parts that remain of the assignment are; to make sure 50% of dorms are filled when a user clicks save, and validation to make sure there is only one gender per suite.
 
 Thank you for the fun project, and opportunity.
+
+## Docker installation
+
+You can use docker and docker-compose to install and run the project:
+
+``` bash
+git clone git@github.com:bflick/silex-sample.git
+cd silex-sample/
+
+make
+```
+
+Then you have access to:
+
+- http://0.0.0.0:8483/ : The project, web interface
+- http://0.0.0.0:8481/ : PHPMyAdmin (user: root / pass: root)
+- http://0.0.0.0:8480/students : The RestApi
