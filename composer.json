@@ -6,11 +6,14 @@
         "dflydev/doctrine-orm-service-provider": "^2.0",
         "symfony/serializer": "^3.3",
         "vlucas/phpdotenv": "^2.4",
-        "eole/sandstone": "^1.2"
+        "eole/sandstone": "^1.2",
+        "monolog/monolog": "^1.23.0"
     },
     "autoload": {
 	"psr-4": {
-            "Sample\\": "application/src/Sample"
+            "Sample\\": "application/src/Sample",
+            "Tools\\": "tools/lib",
+            "CorsHelper\\": "application/src/CorsHelper"
         }
     }
 }

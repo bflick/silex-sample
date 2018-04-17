@@ -1,0 +1,7 @@
+* TODOS
+
+** TODO Write a process open handler 
+
+** TODO Handle opening go 
+
+** TODO run arbitrage simulator or websocket listener 

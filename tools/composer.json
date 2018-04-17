@@ -1,0 +1,13 @@
+{
+    "name": "brianfl/dev-tools",
+    "require": {
+        "ext-pcntl": "^0.0.0",
+        "phpunit/phpunit": "~4"
+    },
+    "authors": [
+        {
+            "name": "Brian Flick",
+            "email": "brian.flick21@gmail.com"
+        }
+    ]
+}

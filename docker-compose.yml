@@ -3,58 +3,87 @@ version: '2'
 services:
     rest-api:
         image: nginx
+        container_name: silex-nginx
         ports:
             - 8480:80
         volumes:
-            - .:/var/www/html/
             - ./docker/rest-api/nginx.conf:/etc/nginx/conf.d/default.conf
+            - .:/var/www/dorm-stack
         links:
             - php-fpm
 
     websocket-server:
         container_name: sandstone-ws
         build: docker/php-fpm
-        command: php application/websocket.php
+        working_dir: /var/www/dorm-stack/
+        command: php application/websocket.php        
         ports:
-            - 8482:8482
+            - 8482:25569
         volumes:
-            - .:/var/www/html/
+            - .:/var/www/dorm-stack
+            - ./docker/tmp:/tmp
+        links:
+            - php-fpm
+            - database
+        depends_on:
+            - database
 
     php-fpm:
         container_name: sandstone-php
         build: docker/php-fpm
+        working_dir: /var/www/dorm-stack
+        env_file:
+            - .env
         volumes:
-            - .:/var/www/html/
+            - .:/var/www/dorm-stack
+            - ./docker/tmp:/tmp
         links:
             - database
-            - websocket-server
+        depends_on:
+            - database
 
     database:
         container_name: sandstone-database
         image: mariadb
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: Q8TgXIdh4ix2pWUFcve2
 
     phpmyadmin:
+        container_name: sandstone-database-phpmyadmin
         image: phpmyadmin/phpmyadmin
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: Q8TgXIdh4ix2pWUFcve2
             PMA_HOST: database
         ports:
             - 8481:80
+        links:
+            - database
+        depends_on:
+            - database
 
     node:
         image : node:8-alpine
         container_name: housing-node
+        working_dir: /var/www/dorm-stack/www/js/housing-app
+        env_file:
+            - .env
         volumes:
-            - .:/var/www
-        working_dir: /var/www
-        command: sleep 100000000
+            - .:/var/www/dorm-stack
+        ports:
+            - 3000:3000
+        command: npm start
+        links:
+            - database
 
     front:
         image: nginx
+        container_name: front-nginx
         ports:
-            - 8483:80
+            - 80:80
         volumes:
-            - ./www/build:/var/www/html/
+            - .:/var/www/dorm-stack
             - ./docker/front/nginx.conf:/etc/nginx/conf.d/default.conf
+        links:
+            - node
+            - websocket-server
+            - rest-api

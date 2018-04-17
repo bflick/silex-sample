@@ -1,23 +1,30 @@
 <?php
 
-namespace Sample\Housing;
+namespace Sample\Process;
 
+use CorsHelper\CorsServiceProvider;
 use Dflydev\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Eole\Sandstone\Application;
+use Eole\Sandstone\OAuth2\Silex\OAuth2ServiceProvider;
 use Eole\Sandstone\Push\Bridge\ZMQ\ServiceProvider as ZMQProvider;
 use Eole\Sandstone\Push\ServiceProvider as  PushProvider;
 use Eole\Sandstone\Serializer\ServiceProvider as SerializerProvider;
 use Eole\Sandstone\Websocket\ServiceProvider as WebsocketProvider;
 use Kurl\Silex\Provider\DoctrineMigrationsProvider;
 use Silex\Provider\DoctrineServiceProvider;
+use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\SerializerServiceProvider;
+use Silex\Provider\MonologServiceProvider;
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Security\Core\User\InMemoryUserProvider;
 
-class HousingApp extends Application
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+class ProcessApp extends Application
 {
     private $console;
     
@@ -46,8 +53,7 @@ class HousingApp extends Application
             )
         );
 
-        $entityPath = __DIR__.'/Entities';
-
+        $entityPath = __DIR__ . '/Events';
         $this->register(new DoctrineOrmServiceProvider(), array(
             'orm.proxies_dir' => __DIR__.'/../../../../cache/doctrine/proxies',
             'orm.default_cache' => 'array',
@@ -56,7 +62,7 @@ class HousingApp extends Application
                     array(
                         'type' => 'annotation',
                         'path' => $entityPath,
-                        'namespace' => 'Sample\\Housing\\Entities',
+                        'namespace' => 'Sample\\Process\\Events',
                     )
             ))
         ));
@@ -76,8 +82,6 @@ class HousingApp extends Application
             'db' => new ConnectionHelper($em->getConnection()),
             'em' => new EntityManagerHelper($em),
         ));
-
-        //       $this->register(new SerializerServiceProvider());
 
         // Sandstone requires JMS serializer
         $this->register(new SerializerProvider());
@@ -99,11 +103,12 @@ class HousingApp extends Application
                 'port' => 5555,
             ],
         ]);
-
-        // Register serializer metadata
-        $this['serializer.builder']->addMetadataDir(
-            __DIR__ . '/../../../config/entities'
-        );
+        
+        $this->register(new CorsServiceProvider(), [
+            "cors.maxAge" => 150,
+            "cors.allowOrigin" => "http://sample",
+            "cors.allowMethods" => 'POST, GET, OPTIONS'
+        ]);
 
         $this['app.user_provider'] = function () {
             return new InMemoryUserProvider([
@@ -117,13 +122,46 @@ class HousingApp extends Application
 
         $this->register(new SecurityServiceProvider(), [
             'security.firewalls' => [
+                'cors-preflight' => [
+                    'anonymous' => true,
+                    'pattern' => $this['cors.preflightRequestMatcher'],
+                ],
+                'authentication' => [
+                    'anonymous' => true,
+                    'pattern' => '^/oauth',
+                ],
                 'api' => [
                     'pattern' => '^/api',
-                    'anonymous' => true,
                     'http' => true,
-                    'users' => $app['app.user_provider'],
+                    'users' => $this['app.user_provider'],
+                    'oauth' => true,
+                    'stateless' => true,
+                    'anonymous' => false,
                  ],
              ],
+        ]);
+
+       // Send POST for /oauth/access-token
+       // grant_type=password&client_id=brianflick-sample&client_secret=DS*u2gdv(UCAfnn350831rfDNg429iAWFASm-25nvAc9xjA3:D>S/?s351rs&username=admin&password=foo
+        $this->register(new OAuth2ServiceProvider(), [
+            'oauth.firewall_name' => 'api',
+            'oauth.security.user_provider' => 'app.user_provider',
+            'oauth.tokens_dir' => getenv('TMP_DIR') . '/oauthtokens',
+            'oauth.scope' => [
+                'id' => 'sandstone-scope',
+                'description' => 'Websocket scope',
+             ],
+             'oauth.clients' => [
+                 'sample' => [
+                     'name' => 'sample',
+                     'id' => 'brianflick-sample',
+                     'secret' => 'secert',
+                 ],
+              ],
+         ]);
+
+        $this->register(new MonologServiceProvider(), [
+            "monolog.logfile" =>  "/tmp/brianflick-sample.log"
         ]);
     }
 }

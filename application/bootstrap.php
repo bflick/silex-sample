@@ -1,4 +1,5 @@
 <?php
+// @todo dev configify
 
 $env = 'dev';
 $debug = true;
@@ -11,7 +12,7 @@ $dotenv->load();
 
 $console = new \Symfony\Component\Console\Application();
 
-$app = new Sample\Housing\HousingApp(array(
+$app = new Sample\Process\ProcessApp(array(
     'env' => $env,
     'root_dir' => $rootDir,
     'cache_dir' => $varDir.'/cache/'.$env,

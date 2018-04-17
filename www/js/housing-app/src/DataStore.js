@@ -1,6 +1,7 @@
 class DataStore {
-    constructor() {
+    constructor(websocket:WebSocket) {
         this.data = {};
+        this.socket = websocket;
     }
 
     setData(data) {
@@ -41,7 +42,7 @@ class DataStore {
         var studentRequest = new Request(process.env.REACT_APP_HOUSING_API+'students');
         return fetch(studentRequest)
             .then(function(response) {
-                if(response.status == 200) return response.json();
+                if (response.status == 200) return response.json();
                 else throw new Error('Something went wrong on api server!');
             })
             .then(function(responseJson) {

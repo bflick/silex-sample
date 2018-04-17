@@ -3,14 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "autobahn": "^18.3.2",
+    "npm": "^5.6.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-scripts": "1.0.12"
+    "react-scripts": "1.0.12",
+    "start": "^5.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts start && cra-append-sw --mode dev ./src/registerServiceWorker.js",
+    "build": "react-scripts build && cra-append-sw ./src/registerServiceWorker.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "cra-append-sw": "^2.3.0"
   }
 }

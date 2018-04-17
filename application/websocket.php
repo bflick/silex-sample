@@ -3,17 +3,21 @@
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/bootstrap.php';
 
-$auditService = new Sample\Housing\Services\AuditService(
-    'sub-dormatory',
+use Eole\Sandstone\Websocket\Server;
+use Sample\Process\Events\EventSubscriber\ProcessListener;
+
+$processListener = new ProcessListener(
+    'elevated-permissions-process',
     $app['orm.em'],
-    $app['serializer']
+    $app['serializer'],
+    $app['monolog']
 );
 
-$app->topic('sub-dormatory', function () use ($auditService) {
-    return $auditService;
+$app->topic('elevated-permissions-process', function () use ($processListener, $app) {
+    return $processListener;
 });
 
+$app["cors-enabled"]($app);
 // Encapsulate your application and start websocket server
-$websocketServer = new \Eole\Sandstone\Websocket\Server($app);
-
+$websocketServer = new Server($app);
 $websocketServer->run();

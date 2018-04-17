@@ -19,6 +19,7 @@ class AuditService extends Topic implements EventSubscriberInterface
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
     }
+
     /**
      * Broadcast message to each subscribing client.
      *
